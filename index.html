@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Chat App</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    button { font-size: 18px; padding: 10px 20px; }
+    #status { margin-top: 10px; color: green; }
+    #text { margin-top: 20px; font-size: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Voice Chat App</h1>
+
+  <button id="startBtn">Start Listening</button>
+  <div id="status"></div>
+  <div id="text"></div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const statusEl = document.getElementById("status");
+    const textEl = document.getElementById("text");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      statusEl.textContent = "Your browser does not support Speech Recognition.";
+      statusEl.style.color = "red";
+    } else {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        statusEl.textContent = "Listening…";
+      };
+
+      recognition.onend = () => {
+        statusEl.textContent = "Stopped.";
+      };
+
+      recognition.onerror = (e) => {
+        statusEl.textContent = "Error: " + e.error;
+        statusEl.style.color = "red";
+      };
+
+      recognition.onresult = (event) => {
+        const speech = event.results[event.results.length - 1][0].transcript;
+        textEl.textContent = speech;
+      };
+
+      startBtn.onclick = () => {
+        statusEl.style.color = "green";
+        recognition.start();
+      };
+    }
+  </script>
+</body>
+</html>
